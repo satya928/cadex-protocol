@@ -1,0 +1,75 @@
+# CADEX OPEN_LOOPS.log — unresolved issues, pending decisions, risky assumptions
+# This file prevents token-heavy re-discovery. If something is unresolved,
+# write it here so the next session loads it instead of finding it again.
+#
+# STATUS values:
+#   open      — not yet resolved, actively blocking or pending
+#   watching  — not blocking now, but needs monitoring
+#   resolved  — closed (keep for 2 weeks, then archive)
+#
+# TYPE values:
+#   bug       — known defect not yet fixed
+#   decision  — choice that needs to be made
+#   assumption — working assumption that needs verification
+#   blocker   — external dependency blocking progress
+#   debt      — technical debt to address later
+
+# ─────────────────────────────────────────────────────────
+# SCHEMA — copy this block for each new open loop
+# ─────────────────────────────────────────────────────────
+# ---
+# id:          OL-[NNN]
+# type:        bug | decision | assumption | blocker | debt
+# status:      open | watching | resolved
+# title:       [one line description]
+# detail:      [what is unknown, what was tried, what is at risk]
+# affects:     [file, feature, or system area]
+# opened:      YYYY-MM-DD
+# resolved:    YYYY-MM-DD | null
+# resolution:  [how it was resolved, if resolved]
+# ---
+
+# ─────────────────────────────────────────────────────────
+# EXAMPLE ENTRIES (delete and replace with your own)
+# ─────────────────────────────────────────────────────────
+
+---
+id:          OL-001
+type:        bug
+status:      open
+title:       Webhook signature validation fails on raw body mismatch
+detail:      Stripe requires raw body for HMAC validation. Express body-parser
+             is parsing before the webhook handler sees it. 3 test cases failing.
+             Tried: moving raw body middleware before json() — still fails.
+affects:     src/api/webhooks.ts, tests/webhook.test.ts
+opened:      2026-04-13
+resolved:    null
+resolution:  null
+---
+
+---
+id:          OL-002
+type:        decision
+status:      open
+title:       Choose between Pinecone and Weaviate for vector memory layer
+detail:      Pinecone is simpler to start, Weaviate is self-hostable and free.
+             Need to decide before building memory retrieval in week 5-6.
+             No blocker yet — decision needed by sprint 3.
+affects:     src/memory/*, architecture
+opened:      2026-04-13
+resolved:    null
+resolution:  null
+---
+
+---
+id:          OL-003
+type:        assumption
+status:      watching
+title:       Supabase RLS is sufficient for multi-tenant agent isolation
+detail:      Assumed RLS policies will isolate agents by owner_id at row level.
+             Not verified under concurrent load. Needs a security test.
+affects:     src/db/rls-policies.sql, src/api/agents.ts
+opened:      2026-04-13
+resolved:    null
+resolution:  null
+---
