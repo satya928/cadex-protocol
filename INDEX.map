@@ -1,0 +1,90 @@
+# CADEX INDEX.map — symbol-level artifact index
+# The agent queries this BEFORE reading any file.
+# Only files matching the current task's keywords are loaded.
+# Hash mismatch = file changed since last index = re-index before loading.
+#
+# VOLATILITY values:
+#   durable   — stable, rarely changes (interfaces, core logic)
+#   volatile  — changes frequently (handlers, controllers, tests)
+#   archived  — no longer active, kept for reference only
+#
+# USAGE by agent:
+#   1. Extract keywords from current task
+#   2. Match keywords against each file's keyword list
+#   3. Load ONLY matched files — and ONLY the matched symbols within them
+#   4. Verify hash matches file on disk before using stored symbol locations
+#   5. If hash mismatch: re-read file, update this index, then proceed
+
+# ─────────────────────────────────────────────────────────
+# SCHEMA — one block per file
+# ─────────────────────────────────────────────────────────
+# [file/path/name.ext]
+# purpose:    [one line — what this file does]
+# keywords:   [comma-separated retrieval terms]
+# volatility: durable | volatile | archived
+# last_task:  [task_id that last modified this file]
+# symbols:
+#   [SymbolName]  @sha256:[8-char-hash]  lines:[start]-[end]  # [brief note]
+
+# ─────────────────────────────────────────────────────────
+# EXAMPLE ENTRIES (delete and replace with your own)
+# ─────────────────────────────────────────────────────────
+
+[src/api/agents.ts]
+purpose:    Agent registration, retrieval, and reputation endpoints
+keywords:   agent, registry, registration, profile, reputation, API, endpoint
+volatility: volatile
+last_task:  T-003
+symbols:
+  registerAgent     @sha256:a1b2c3d4  lines:12-67    # POST /api/agents
+  getAgentById      @sha256:b2c3d4e5  lines:70-98    # GET /api/agents/:id
+  updateReputation  @sha256:c3d4e5f6  lines:101-134  # PATCH /api/agents/:id/reputation
+  listAgents        @sha256:d4e5f6g7  lines:137-178  # GET /api/agents
+
+[src/api/webhooks.ts]
+purpose:    Stripe webhook event handler
+keywords:   webhook, stripe, signature, payment, event, validation
+volatility: volatile
+last_task:  T-007
+symbols:
+  handleWebhook     @sha256:e5f6g7h8  lines:15-89    # main webhook router — OL-001 open bug
+  validateSignature @sha256:f6g7h8i9  lines:92-124   # HMAC validation — failing
+  parseEvent        @sha256:g7h8i9j0  lines:127-156  # event type router
+
+[src/db/schema.ts]
+purpose:    Supabase database schema definitions and type exports
+keywords:   schema, database, types, supabase, tables, migrations
+volatility: durable
+last_task:  T-001
+symbols:
+  AgentRecord       @sha256:h8i9j0k1  lines:8-34     # core agent table type
+  TaskRecord        @sha256:i9j0k1l2  lines:37-58    # task execution record
+  ReputationEvent   @sha256:j0k1l2m3  lines:61-79    # reputation change event
+
+[src/types/ais.ts]
+purpose:    Agent Identity Standard schema — AIS v1.0 type definitions
+keywords:   AIS, identity, schema, standard, agent, types, interface
+volatility: durable
+last_task:  T-002
+symbols:
+  AgentIdentity     @sha256:k1l2m3n4  lines:5-42     # root AIS type
+  SkillTree         @sha256:l2m3n4o5  lines:45-71    # skill structure
+  LineageRecord     @sha256:m3n4o5p6  lines:74-98    # lineage data
+
+[tests/agents.test.ts]
+purpose:    Integration tests for agent registration and retrieval
+keywords:   test, agent, registration, integration, spec
+volatility: volatile
+last_task:  T-003
+symbols:
+  describe_register  @sha256:n4o5p6q7  lines:8-67    # registration test suite
+  describe_retrieve  @sha256:o5p6q7r8  lines:70-121  # retrieval test suite
+
+[tests/webhook.test.ts]
+purpose:    Unit and integration tests for webhook handling
+keywords:   test, webhook, stripe, signature, validation, spec
+volatility: volatile
+last_task:  T-007
+symbols:
+  describe_signature @sha256:p6q7r8s9  lines:12-78   # signature validation — 1 failing
+  describe_events    @sha256:q7r8s9t0  lines:81-134  # event type routing
