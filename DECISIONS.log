@@ -1,0 +1,56 @@
+# CADEX DECISIONS.log — append-only architectural decision record
+# Never edit or delete past entries. Only append.
+# Agent loads: last 10 entries + keyword-matched entries for current task.
+# Full history is never loaded — only retrieved by match.
+#
+# CONFIDENCE levels:
+#   confirmed   — verified by test, code, or explicit user decision
+#   provisional — working assumption, not yet verified
+#   speculative — hypothesis under consideration, do not treat as truth
+#
+# SOURCE values:
+#   user        — explicitly stated by the developer
+#   test        — proven by passing/failing tests
+#   code        — inferred from existing implementation
+#   discussion  — emerged from planning conversation
+#   inference   — agent-inferred, needs verification
+
+# ─────────────────────────────────────────────────────────
+# SCHEMA — copy this block for every new decision
+# ─────────────────────────────────────────────────────────
+# ---
+# date:             YYYY-MM-DD
+# decision:         [one sentence — what was decided]
+# reason:           [why — what was considered and rejected]
+# affects:          [file paths or system areas impacted]
+# confidence:       confirmed | provisional | speculative
+# source:           user | test | code | discussion | inference
+# last_verified_at: YYYY-MM-DD | null
+# keywords:         [comma-separated terms for retrieval matching]
+# ---
+
+# ─────────────────────────────────────────────────────────
+# EXAMPLE ENTRIES (delete and replace with your own)
+# ─────────────────────────────────────────────────────────
+
+---
+date:             2026-04-13
+decision:         Use Supabase for agent registry — not raw Postgres
+reason:           Built-in RLS, auth, and real-time. Considered PlanetScale — rejected: no row-level security.
+affects:          src/db/*, src/api/agents.ts, migrations/
+confidence:       confirmed
+source:           user
+last_verified_at: 2026-04-13
+keywords:         database, supabase, postgres, registry, storage
+---
+
+---
+date:             2026-04-13
+decision:         Token budget target is 800 per task call
+reason:           Benchmark from Agenity paper — 300-800 token range proven sufficient for RAA agents.
+affects:          .cadex/BUDGET.md, all retrieval decisions
+confidence:       provisional
+source:           discussion
+last_verified_at: null
+keywords:         token, budget, context, retrieval
+---
