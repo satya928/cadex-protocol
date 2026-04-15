@@ -1,0 +1,91 @@
+# CADEX DIGEST.log — structured task delta chain
+# Replaces prose summaries entirely. Every completed task emits one JSON delta block.
+# Agent loads: last 7 deltas at session start.
+# Volatile execution entries auto-expire after 5 sessions unless promoted to DECISIONS.log.
+#
+# DELTA TYPES:
+#   state_delta     — decision made, requirement changed, convention updated
+#   artifact_delta  — file/symbol added, edited, deleted, renamed
+#   execution_delta — test result, bug found, command run, result observed
+#   intent_delta    — what the task actually accomplished (human-readable)
+#
+# CHANGE values for artifact_delta:
+#   added | edited | deleted | renamed | refactored
+#
+# CONFIDENCE for state_delta entries:
+#   confirmed | provisional | speculative
+#
+# After completing a task, the agent appends ONE block below.
+# Never edit past blocks — append only.
+
+# ─────────────────────────────────────────────────────────
+# SCHEMA
+# ─────────────────────────────────────────────────────────
+# {
+#   "task_id": "T-NNN",
+#   "date": "YYYY-MM-DD",
+#   "mode": "bugfix | feature | refactor | design | docs",
+#   "intent_delta": "one sentence — what this task accomplished",
+#   "artifact_delta": [
+#     {"file": "path/to/file.ts", "symbol": "FunctionName", "hash": "sha256:8chars", "change": "edited"}
+#   ],
+#   "state_delta": [
+#     {"type": "decision|convention|requirement", "value": "...", "confidence": "confirmed", "source": "test|user|code|discussion", "last_verified_at": "YYYY-MM-DD"}
+#   ],
+#   "execution_delta": [
+#     {"type": "test|bug|command|observation", "value": "...", "volatile": true}
+#   ],
+#   "next_pointer": ["path/to/file.ts#SymbolName"],
+#   "open_loops_opened": ["OL-NNN"],
+#   "open_loops_resolved": ["OL-NNN"],
+#   "session_tokens_used": 000
+# }
+
+# ─────────────────────────────────────────────────────────
+# EXAMPLE ENTRIES (delete and replace with your own)
+# ─────────────────────────────────────────────────────────
+
+{
+  "task_id": "T-001",
+  "date": "2026-04-13",
+  "mode": "feature",
+  "intent_delta": "Created Supabase schema with agent, task, and reputation tables",
+  "artifact_delta": [
+    {"file": "src/db/schema.ts", "symbol": "AgentRecord", "hash": "sha256:h8i9j0k1", "change": "added"},
+    {"file": "src/db/schema.ts", "symbol": "TaskRecord", "hash": "sha256:i9j0k1l2", "change": "added"},
+    {"file": "migrations/001_init.sql", "symbol": null, "hash": "sha256:z9y8x7w6", "change": "added"}
+  ],
+  "state_delta": [
+    {"type": "decision", "value": "Use Supabase RLS for multi-tenant agent isolation", "confidence": "provisional", "source": "discussion", "last_verified_at": null}
+  ],
+  "execution_delta": [
+    {"type": "command", "value": "supabase db push — succeeded", "volatile": true},
+    {"type": "observation", "value": "Migration applied cleanly to local dev", "volatile": true}
+  ],
+  "next_pointer": ["src/api/agents.ts#registerAgent"],
+  "open_loops_opened": ["OL-003"],
+  "open_loops_resolved": [],
+  "session_tokens_used": 684
+}
+
+{
+  "task_id": "T-002",
+  "date": "2026-04-13",
+  "mode": "feature",
+  "intent_delta": "Defined AIS v1.0 TypeScript schema — AgentIdentity, SkillTree, LineageRecord",
+  "artifact_delta": [
+    {"file": "src/types/ais.ts", "symbol": "AgentIdentity", "hash": "sha256:k1l2m3n4", "change": "added"},
+    {"file": "src/types/ais.ts", "symbol": "SkillTree", "hash": "sha256:l2m3n4o5", "change": "added"},
+    {"file": "src/types/ais.ts", "symbol": "LineageRecord", "hash": "sha256:m3n4o5p6", "change": "added"}
+  ],
+  "state_delta": [
+    {"type": "decision", "value": "AIS schema uses DID string for agent_id, not UUID", "confidence": "confirmed", "source": "user", "last_verified_at": "2026-04-13"}
+  ],
+  "execution_delta": [
+    {"type": "test", "value": "TypeScript compilation — 0 errors", "volatile": true}
+  ],
+  "next_pointer": ["src/api/agents.ts#registerAgent"],
+  "open_loops_opened": [],
+  "open_loops_resolved": [],
+  "session_tokens_used": 521
+}
